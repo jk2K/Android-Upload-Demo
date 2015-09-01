@@ -1,9 +1,41 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal">
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:inputType="textUri"
+        android:id="@+id/serverUrl"
+        android:layout_marginTop="20dp"
+        android:hint="@string/server_url_hint" />
+    <Button
+        android:text="@string/select_photo"
+        android:id="@+id/selectPhotoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <TextView
+        android:text="@string/upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <Button
+        android:text="@string/android_upload_service"
+        android:id="@+id/uploadServiceButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView" />
+        android:layout_marginTop="10dp" />
+    <Button
+        android:text="@string/volley"
+        android:id="@+id/volleyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" />
+    <Button
+        android:text="@string/ok_http"
+        android:id="@+id/okHttpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" />
 </LinearLayout>
