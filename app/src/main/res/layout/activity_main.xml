@@ -11,6 +11,13 @@
         android:id="@+id/serverUrl"
         android:layout_marginTop="20dp"
         android:hint="@string/server_url_hint" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:inputType="textUri"
+        android:id="@+id/parameterName"
+        android:layout_marginTop="20dp"
+        android:hint="@string/parameter_name" />
     <Button
         android:text="@string/select_photo"
         android:id="@+id/selectPhotoButton"
@@ -25,17 +32,20 @@
         android:id="@+id/uploadServiceButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:textAllCaps="false" />
     <Button
         android:text="@string/volley"
         android:id="@+id/volleyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:textAllCaps="false" />
     <Button
         android:text="@string/ok_http"
         android:id="@+id/okHttpButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:textAllCaps="false" />
 </LinearLayout>

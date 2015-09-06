@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">文件上传 Demo</string>
     <string name="server_url_hint">服务器地址</string>
+    <string name="parameter_name">参数名称</string>
     <string name="select_photo">选择图片</string>
     <string name="upload">请点击相应的上传方式</string>
-    <string name="android_upload_service">android upload service</string>
-    <string name="ok_http">ok_http</string>
-    <string name="volley">volley</string>
+    <string name="android_upload_service">Android Upload Service</string>
+    <string name="volley">Volley</string>
+    <string name="ok_http">OKHttp</string>
 </resources>
