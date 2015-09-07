@@ -14,7 +14,12 @@ import com.alexbbb.uploadservice.AbstractUploadServiceReceiver;
 import com.alexbbb.uploadservice.ContentType;
 import com.alexbbb.uploadservice.UploadRequest;
 import com.alexbbb.uploadservice.UploadService;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 
+import org.json.JSONObject;
+
+import java.security.cert.LDAPCertStoreParameters;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -44,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onCompleted(String uploadId, int serverResponseCode, String serverResponseMessage) {
             uploadSuccess();
+            Log.d(TAG, serverResponseMessage);
         }
     };
 
@@ -112,6 +118,23 @@ public class MainActivity extends AppCompatActivity {
                 if (!userInputIsValid()) {
                     return;
                 }
+                VolleyMultiPartRequest request = new VolleyMultiPartRequest(
+                        serverUrl,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Log.d(TAG, response);
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d(TAG, error.getLocalizedMessage());
+                            }
+                        }
+                );
+                request.addParam("test", "hh");
+                HelloApplication.getInstance().getRequestQueue().add(request);
             }
         });
 
