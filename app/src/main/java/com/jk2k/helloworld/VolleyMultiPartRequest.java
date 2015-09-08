@@ -1,5 +1,7 @@
 package com.jk2k.helloworld;
 
+import android.util.Log;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
@@ -11,6 +13,8 @@ import com.android.volley.toolbox.HttpHeaderParser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -21,6 +25,7 @@ import java.util.Map;
  */
 public class VolleyMultiPartRequest extends Request<String> {
 
+    private static final String TAG = "UploadServiceDemo";
     private final Listener<String> mListener;
     // POST param
     private Map<String, String> mParams = null;
@@ -62,26 +67,32 @@ public class VolleyMultiPartRequest extends Request<String> {
     }
 
     @Override
-    protected Map<String, String> getParams() throws AuthFailureError {
-        return mParams;
-    }
-
-    @Override
     public String getBodyContentType() {
         return "multipart/form-data;boundary=" + mBoundary;
     }
 
     @Override
     public byte[] getBody() throws AuthFailureError {
-        // 输出流
-        DataOutputStream dos = new DataOutputStream(mOutputStream);
         try {
-            writeFirstBoundary();
-            dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""
-                    + "ic_action_file_attachment_light.png" + "\"" + lineEnd);
-            dos.writeBytes(lineEnd);
+            // 输出流
+            DataOutputStream dos = new DataOutputStream(mOutputStream);
 
-            dos.writeBytes("hhhahhaha");
+            for (String key : mFileUploads.keySet()) {
+                File file = new File(mFileUploads.get(key));
+                FileInputStream fin = new FileInputStream(file);
+                writeFirstBoundary();
+                final String type = "Content-Type: application/octet-stream" + lineEnd;
+                dos.writeBytes(type);
+                dos.writeBytes(getContentDisposition(key, file.getName()));
+                dos.writeBytes("Content-Transfer-Encoding: binary\r\n\r\n");
+                final byte[] tmp = new byte[4096];
+                int len = 0;
+                while ((len = fin.read(tmp)) != -1) {
+                    mOutputStream.write(tmp, 0, len);
+                }
+                fin.close();
+            }
+//            Log.d(TAG, mOutputStream.toString());
 
             // send multipart form data necessary after file data...
             dos.writeBytes(lineEnd);
@@ -92,6 +103,10 @@ public class VolleyMultiPartRequest extends Request<String> {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private String getContentDisposition(String paramName, String fileName) {
+        return "Content-Disposition: form-data; name=\"" + paramName + "\"; filename=\"" + fileName + "\"" + lineEnd;
     }
 
     /**
