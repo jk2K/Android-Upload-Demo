@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                 );
-                request.addFile("test", photoPath);
+                request.addFile(paramNameString, photoPath);
                 HelloApplication.getInstance().getRequestQueue().add(request);
             }
         });
