@@ -78,19 +78,23 @@ public class VolleyMultiPartRequest extends Request<String> {
             DataOutputStream dos = new DataOutputStream(mOutputStream);
 
             for (String key : mFileUploads.keySet()) {
-                File file = new File(mFileUploads.get(key));
-                FileInputStream fin = new FileInputStream(file);
                 writeFirstBoundary();
+
+                File file = new File(mFileUploads.get(key));
                 final String type = "Content-Type: application/octet-stream" + lineEnd;
                 dos.writeBytes(type);
                 dos.writeBytes(getContentDisposition(key, file.getName()));
                 dos.writeBytes("Content-Transfer-Encoding: binary\r\n\r\n");
+
+                FileInputStream fin = new FileInputStream(file);
                 final byte[] tmp = new byte[4096];
                 int len = 0;
                 while ((len = fin.read(tmp)) != -1) {
                     mOutputStream.write(tmp, 0, len);
                 }
                 fin.close();
+
+                dos.writeBytes(lineEnd);
             }
 //            Log.d(TAG, mOutputStream.toString());
 
