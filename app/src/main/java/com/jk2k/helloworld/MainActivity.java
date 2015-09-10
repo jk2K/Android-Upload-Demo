@@ -16,10 +16,15 @@ import com.alexbbb.uploadservice.UploadRequest;
 import com.alexbbb.uploadservice.UploadService;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.MultipartBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 
-import org.json.JSONObject;
-
-import java.security.cert.LDAPCertStoreParameters;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -28,11 +33,13 @@ import me.iwf.photopicker.utils.PhotoPickerIntent;
 
 public class MainActivity extends AppCompatActivity {
     public final static int REQUEST_CODE = 1;
-    private static final String TAG = "UploadServiceDemo";
+    private static final String TAG = "UploadDemo";
     private String photoPath = null;
     private EditText paramName;
     private String paramNameString = "";
-    private String serverUrl = "http://posttestserver.com/post.php?dir=example";
+    private EditText serverUrlEditText;
+    private String serverUrl = "";
+    private final OkHttpClient client = new OkHttpClient();
     private final AbstractUploadServiceReceiver uploadReceiver = new AbstractUploadServiceReceiver() {
 
         @Override
@@ -71,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         paramName = (EditText) findViewById(R.id.parameterName);
+        serverUrlEditText = (EditText) findViewById(R.id.serverUrl);
 
         findViewById(R.id.selectPhotoButton).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -144,7 +152,31 @@ public class MainActivity extends AppCompatActivity {
                 if (!userInputIsValid()) {
                     return;
                 }
-                ;
+                File file = new File(photoPath);
+                RequestBody requestBody = new MultipartBuilder()
+                        .type(MultipartBuilder.FORM)
+                        .addFormDataPart(
+                                paramNameString,
+                                file.getName(),
+                                RequestBody.create(MediaType.parse("image/png"), file)
+                        )
+                        .build();
+                Request request = new Request.Builder()
+                        .url(serverUrl)
+                        .post(requestBody)
+                        .build();
+
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException exc) {
+                        exc.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(com.squareup.okhttp.Response response) throws IOException {
+                        Log.d(TAG, response.body().string());
+                    }
+                });
             }
         });
     }
@@ -163,6 +195,11 @@ public class MainActivity extends AppCompatActivity {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+        serverUrl = serverUrlEditText.getText().toString();
+        if (serverUrl.length() == 0) {
+            Snackbar.make(findViewById(android.R.id.content), "请输入服务器地址", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
 
         if (photoPath == null) {
             Snackbar.make(findViewById(android.R.id.content), "请选择图片", Snackbar.LENGTH_SHORT).show();
@@ -170,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         }
         paramNameString = paramName.getText().toString();
         if (paramNameString.length() == 0) {
-            Snackbar.make(findViewById(android.R.id.content), "请填写参数信息", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(findViewById(android.R.id.content), "请输入参数信息", Snackbar.LENGTH_SHORT).show();
             return false;
         }
         return true;
